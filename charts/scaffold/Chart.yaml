@@ -32,8 +32,8 @@ dependencies:
     repository: https://sigstore.github.io/helm-charts
     condition: ctlog.enabled
   - name: tuf
-    version: 0.1.14
-    repository: https://sigstore.github.io/helm-charts
+    version: 0.1.15
+    repository: file://../tuf
     condition: tuf.enabled
   - name: tsa
     version: 1.0.3

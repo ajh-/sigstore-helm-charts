@@ -12,6 +12,7 @@ subjects:
   - kind: ServiceAccount
     name: {{ .Values.copySecretJob.serviceaccount }}
 ---
+{{- if .Values.rekor.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -25,7 +26,9 @@ subjects:
   - kind: ServiceAccount
     name: {{ .Values.copySecretJob.serviceaccount }}
 {{ include "tuf.namespace" .Subcharts.tuf | indent 4 }}
+{{- end }}
 ---
+{{- if .Values.fulcio.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -39,7 +42,9 @@ subjects:
   - kind: ServiceAccount
     name: {{ .Values.copySecretJob.serviceaccount }}
 {{ include "tuf.namespace" .Subcharts.tuf | indent 4 }}
+{{- end }}
 ---
+{{- if .Values.ctlog.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -53,7 +58,9 @@ subjects:
   - kind: ServiceAccount
     name: {{ .Values.copySecretJob.serviceaccount }}
 {{ include "tuf.namespace" .Subcharts.tuf | indent 4 }}
+{{- end }}
 ---
+{{- if .Values.tsa.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -67,4 +74,5 @@ subjects:
   - kind: ServiceAccount
     name: {{ .Values.copySecretJob.serviceaccount }}
 {{ include "tuf.namespace" .Subcharts.tuf | indent 4 }}
+{{- end }}
 {{- end }}
