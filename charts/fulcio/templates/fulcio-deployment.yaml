@@ -111,6 +111,9 @@ spec:
               mountPath: "/var/run/grpc-tls"
               readOnly: true
            {{- end }}
+           {{- with .Values.server.volumeMounts }}
+             {{- toYaml . | nindent 12 }}
+           {{- end }}
     {{- if .Values.server.resources }}
           resources:
 {{ toYaml .Values.server.resources | indent 12 }}
@@ -155,6 +158,9 @@ spec:
                 path: cert.pem
               - key: {{ .Values.server.grpcSvcTLS.keyField }}
                 path: key.pem
+        {{- end }}
+        {{- with .Values.volumes }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
     {{- if .Values.server.nodeSelector }}
       nodeSelector:
