@@ -1,0 +1,68 @@
+fulcio:
+  server:
+    ingress:
+      className: nginx
+      http:
+        hosts:
+          - host: fulcio.sigstore.local
+            path: /
+#      tls:
+#        - hosts:
+#            - fulcio.sigstore.local
+#          secretName: fulcio-tls
+    volumeMounts:
+      - name: root-cert
+        mountPath: /etc/ssl/certs/ca-certificates.crt
+        subPath: rootca.crt
+        readOnly: true
+  volumes:
+    - name: root-cert
+      configMap:
+        name: root-cert
+  config:
+    contents:
+      OIDCIssuers:
+        https://dex.sigstore.local:
+          IssuerURL: https://dex.sigstore.local
+          ClientID: sigstore
+          Type: email
+        https://oauth2.sigstore.dev/auth:
+          IssuerURL: https://oauth2.sigstore.dev/auth
+          ClientID: sigstore
+          Type: email
+          IssuerClaim: $.federated_claims.connector_id
+
+rekor:
+  server:
+    ingress:
+      className: nginx
+      hosts:
+        - host: rekor.sigstore.local
+          path: /
+#      tls:
+#        - hosts:
+#            - rekor.sigstore.local
+#          secretName: rekor-tls
+
+copySecretJob:
+  enabled: true
+
+tuf:
+  enabled: true
+  ingress:
+    className: nginx
+    http:
+      hosts:
+        - host: tuf.sigstore.local
+          path: /
+#    tls:
+#      - hosts:
+#          - tuf.sigstore.local
+#        secretName: tuf-tls
+  secrets:
+    rekor:
+      enabled: true
+    fulcio:
+      enabled: true
+    ctlog:
+      enabled: true

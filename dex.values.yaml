@@ -1,0 +1,70 @@
+config:
+  issuer: https://dex.sigstore.local
+  storage:
+    type: memory
+  frontend:
+    issuer: Dex
+    theme: dark
+  web:
+    tlsCert: /etc/dex/tls/tls.crt
+    tlsKey: /etc/dex/tls/tls.key
+  oauth2:
+    responseTypes: [ "code" ]
+    skipApprovalScreen: true
+    alwaysShowLoginScreen: true
+  staticClients:
+  - id: sigstore
+    public: true
+    name: 'sigstore'
+  connectors:
+  - type: github
+    id: github-sigstore-test
+    name: GitHub
+    config:
+      clientID: $GITHUB_CLIENT_ID
+      clientSecret: $GITHUB_CLIENT_SECRET
+      redirectURI: https://dex.sigstore.local/callback
+  - type: microsoft
+    id: microsoft
+    name: Microsoft
+    config:
+      clientID: $MICROSOFT_CLIENT_ID
+      clientSecret: $MICROSOFT_CLIENT_SECRET
+      redirectURI: https://dex.sigstore.local/callback
+      tenant: common
+
+envFrom:
+- secretRef:
+    name: github-client
+- secretRef:
+    name: microsoft-client
+
+volumeMounts:
+- name: tls
+  mountPath: /etc/dex/tls
+volumes:
+- name: tls
+  secret:
+    secretName: dex-tls
+
+ingress:
+  enabled: true
+  hosts:
+    - host: dex.sigstore.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - dex.sigstore.local
+      secretName: dex-tls
+
+https:
+  enabled: true
+
+service:
+  ports:
+    http:
+      port: 80
+    https:
+      port: 443
